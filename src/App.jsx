@@ -19,7 +19,7 @@ const productos = [
  {id:13,nombre:'Set Brochas Essential',categoria:'Brochas',descripcion:'Brochas esenciales para rostro y ojos.',imagen:'/img/brochas.svg',precio:11900},
  {id:14,nombre:'Esponja Beauty Blend',categoria:'Brochas',descripcion:'Accesorio suave para aplicar y difuminar productos.',imagen:'/img/EsponjaBeautyBlend.jpg',precio:4500},
  {id:15,nombre:'Sérum Glow Prep',categoria:'Skincare',descripcion:'Preparación ligera para una apariencia hidratada.',imagen:'/img/SérumGlowPrep.jpg',precio:10900},
- {id:16,nombre:'Crema Soft Hydration',categoria:'Skincare',descripcion:'Hidratación ligera para complementar tu rutina.',imagen:'/img/CremaSoftHydration.gijpg',precio:9900}
+ {id:16,nombre:'Crema Soft Hydration',categoria:'Skincare',descripcion:'Hidratación ligera para complementar tu rutina.',imagen:'/img/CremaSoftHydration.jpg',precio:9900}
 ];
 
 function App() {
