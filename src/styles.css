@@ -150,6 +150,12 @@ body {
   line-height: 1.7;
 }
 
+.hero-botones {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
 /* =========================
    TEXTOS Y BOTONES
 ========================= */
