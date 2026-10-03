@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useFavoritos } from "../context/FavoritosContext.jsx";
 import { useCarrito } from "../context/CarritoContext.jsx";
 
@@ -12,56 +14,53 @@ function Producto({
   const { toggleFavorito, esFavorito } = useFavoritos();
   const { agregarAlCarrito } = useCarrito();
 
+  const [aviso, setAviso] = useState("");
+
+  const navigate = useNavigate();
+
   const favoritoActivo = esFavorito(id);
 
+  const producto = {
+    id,
+    nombre,
+    categoria,
+    descripcion,
+    imagen,
+    precio
+  };
+
+  function mostrarAviso(mensaje) {
+    setAviso(mensaje);
+
+    setTimeout(() => {
+      setAviso("");
+    }, 1800);
+  }
+
   function agregar() {
-    agregarAlCarrito({
-      id,
-      nombre,
-      categoria,
-      descripcion,
-      imagen,
-      precio
-    });
+    agregarAlCarrito(producto);
 
-    const aviso = document.getElementById("aviso");
-
-    if (aviso) {
-      aviso.textContent = `✓ ${nombre} agregado al carrito`;
-      aviso.classList.add("visible");
-
-      setTimeout(() => {
-        aviso.classList.remove("visible");
-      }, 1600);
-    }
+    mostrarAviso(
+      `✓ ${nombre} agregado al carrito`
+    );
   }
 
   function favorito() {
-    toggleFavorito({
-      id,
-      nombre,
-      categoria,
-      descripcion,
-      imagen,
-      precio
-    });
+    toggleFavorito(producto);
+
+    if (favoritoActivo) {
+      mostrarAviso(
+        `♡ ${nombre} eliminado de favoritos`
+      );
+    } else {
+      mostrarAviso(
+        `♥ ${nombre} agregado a favoritos`
+      );
+    }
   }
 
   function verProducto() {
-    const modal = document.getElementById("modal-producto");
-
-    if (!modal) return;
-
-    document.getElementById("modal-img").src = imagen;
-    document.getElementById("modal-img").alt = nombre;
-
-    document.getElementById("modal-nombre").textContent = nombre;
-    document.getElementById("modal-cat").textContent = categoria;
-    document.getElementById("modal-desc").textContent = descripcion;
-    document.getElementById("modal-precio").textContent =
-      `₡${precio.toLocaleString("es-CR")}`;
-
-    modal.showModal();
+    navigate(`/productos/${id}`);
   }
 
   return (
@@ -70,32 +69,47 @@ function Producto({
       data-categoria={categoria.toLowerCase()}
       data-nombre={nombre.toLowerCase()}
     >
+
       <div className="producto-imagen">
-        <img src={imagen} alt={nombre} />
+
+        <img
+          src={imagen}
+          alt={nombre}
+        />
 
         <button
-          className={`favorito ${favoritoActivo ? "activo" : ""}`}
+          type="button"
+          className={`favorito ${
+            favoritoActivo ? "activo" : ""
+          }`}
           onClick={favorito}
           aria-label={`Favorito ${nombre}`}
         >
           {favoritoActivo ? "♥" : "♡"}
         </button>
+
       </div>
 
       <span className="categoria-mini">
         {categoria}
       </span>
 
-      <h3>{nombre}</h3>
+      <h3>
+        {nombre}
+      </h3>
 
-      <p>{descripcion}</p>
+      <p>
+        {descripcion}
+      </p>
 
       <strong>
         ₡{precio.toLocaleString("es-CR")}
       </strong>
 
       <div className="acciones">
+
         <button
+          type="button"
           className="boton secundario"
           onClick={verProducto}
         >
@@ -103,12 +117,27 @@ function Producto({
         </button>
 
         <button
+          type="button"
           className="boton"
           onClick={agregar}
         >
           🛍️ Agregar
         </button>
+
       </div>
+
+      {aviso && (
+        <div
+          className="aviso visible"
+          role="status"
+          aria-live="polite"
+        >
+          {aviso}
+        </div>
+      )}
+
     </article>
   );
-} export default Producto;
+}
+
+export default Producto;
