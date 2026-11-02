@@ -6,27 +6,34 @@ const categorias = [
   "Labios",
   "Rostro",
   "Ojos",
+  "Cejas",
   "Paletas",
-  "Rubor",
+  "Rubores",
   "Iluminadores",
   "Brochas",
-  "Skincare"
+  "Skincare",
+  "Accesorios"
 ];
 
 function ListaProductos({ productos }) {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
   const [busqueda, setBusqueda] = useState("");
 
-  const productosFiltrados = productos.filter((producto) => {
-    const coincideCategoria =
-      categoriaSeleccionada === "Todos" ||
-      producto.categoria === categoriaSeleccionada;
+const normalizar = (texto) =>
+  String(texto ?? "").trim().toLowerCase();
 
-    const coincideBusqueda =
-      producto.nombre.toLowerCase().includes(busqueda.toLowerCase());
+const productosFiltrados = productos.filter((producto) => {
+  const coincideCategoria =
+    categoriaSeleccionada === "Todos" ||
+    normalizar(producto.categoria) ===
+      normalizar(categoriaSeleccionada);
 
-    return coincideCategoria && coincideBusqueda;
-  });
+  const coincideBusqueda = normalizar(producto.nombre).includes(
+    normalizar(busqueda)
+  );
+
+  return coincideCategoria && coincideBusqueda;
+});
 
   function cerrarModal() {
     document.getElementById("modal-producto")?.close();

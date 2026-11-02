@@ -1,9 +1,41 @@
-import { createContext, useContext, useState } from "react";
 
-const CarritoContext = createContext();
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+const CarritoContext = createContext(null);
+const CLAVE_CARRITO = "bellaGlowCarrito";
+
+function recuperarCarrito() {
+  try {
+    const guardado = localStorage.getItem(CLAVE_CARRITO);
+
+    if (!guardado) return [];
+
+    const productos = JSON.parse(guardado);
+    return Array.isArray(productos) ? productos : [];
+  } catch {
+    return [];
+  }
+}
 
 export function CarritoProvider({ children }) {
-  const [carrito, setCarrito] = useState([]);
+  const [carrito, setCarrito] = useState(recuperarCarrito);
+
+  // Guardar automáticamente cada cambio del carrito.
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        CLAVE_CARRITO,
+        JSON.stringify(carrito)
+      );
+    } catch (error) {
+      console.error("No se pudo guardar el carrito:", error);
+    }
+  }, [carrito]);
 
   function agregarAlCarrito(producto) {
     setCarrito((actual) => {
@@ -14,10 +46,7 @@ export function CarritoProvider({ children }) {
       if (existe) {
         return actual.map((item) =>
           item.id === producto.id
-            ? {
-                ...item,
-                cantidad: item.cantidad + 1
-              }
+            ? { ...item, cantidad: item.cantidad + 1 }
             : item
         );
       }
@@ -26,8 +55,9 @@ export function CarritoProvider({ children }) {
         ...actual,
         {
           ...producto,
-          cantidad: 1
-        }
+          origen: producto.origen || "local",
+          cantidad: 1,
+        },
       ];
     });
   }
@@ -42,10 +72,7 @@ export function CarritoProvider({ children }) {
     setCarrito((actual) =>
       actual.map((item) =>
         item.id === id
-          ? {
-              ...item,
-              cantidad: item.cantidad + 1
-            }
+          ? { ...item, cantidad: item.cantidad + 1 }
           : item
       )
     );
@@ -56,10 +83,7 @@ export function CarritoProvider({ children }) {
       actual
         .map((item) =>
           item.id === id
-            ? {
-                ...item,
-                cantidad: item.cantidad - 1
-              }
+            ? { ...item, cantidad: item.cantidad - 1 }
             : item
         )
         .filter((item) => item.cantidad > 0)
@@ -75,9 +99,19 @@ export function CarritoProvider({ children }) {
     0
   );
 
-  const total = carrito.reduce(
+  const totalColones = carrito.reduce(
     (suma, item) =>
-      suma + item.precio * item.cantidad,
+      item.origen !== "externo"
+        ? suma + Number(item.precio) * item.cantidad
+        : suma,
+    0
+  );
+
+  const totalDolares = carrito.reduce(
+    (suma, item) =>
+      item.origen === "externo"
+        ? suma + Number(item.precio) * item.cantidad
+        : suma,
     0
   );
 
@@ -86,12 +120,13 @@ export function CarritoProvider({ children }) {
       value={{
         carrito,
         agregarAlCarrito,
+        quitarDelCarrito,
         aumentarCantidad,
         disminuirCantidad,
-        quitarDelCarrito,
         vaciarCarrito,
         cantidadTotal,
-        total
+        totalColones,
+        totalDolares,
       }}
     >
       {children}

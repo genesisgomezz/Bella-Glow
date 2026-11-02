@@ -1,264 +1,180 @@
+
 import { Link, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCarrito } from "../context/CarritoContext.jsx";
 
-const productos = [
-  {
-    id: 1,
-    nombre: "Labial Velvet Matte",
-    categoria: "Labios",
-    descripcion:
-      "Color intenso con acabado matte y textura cómoda.",
-    imagen: "/img/labial.svg",
-    precio: 8500
-  },
-  {
-    id: 2,
-    nombre: "Gloss Crystal Shine",
-    categoria: "Labios",
-    descripcion:
-      "Brillo ligero para un acabado luminoso.",
-    imagen: "/img/GlossCrystalShine.jpg",
-    precio: 6900
-  },
-  {
-    id: 3,
-    nombre: "Base Glow Skin",
-    categoria: "Rostro",
-    descripcion:
-      "Cobertura natural y uniforme con acabado luminoso.",
-    imagen: "/img/base.svg",
-    precio: 12500
-  },
-  {
-    id: 4,
-    nombre: "Corrector Soft Cover",
-    categoria: "Rostro",
-    descripcion:
-      "Cobertura suave para unificar el tono.",
-    imagen: "/img/CorrectorSoftCover.jpg",
-    precio: 9500
-  },
-  {
-    id: 5,
-    nombre: "Máscara Lash Bloom",
-    categoria: "Ojos",
-    descripcion:
-      "Define y realza las pestañas para una mirada expresiva.",
-    imagen: "/img/MáscaraLashBloom.jpg",
-    precio: 7900
-  },
-  {
-    id: 6,
-    nombre: "Delineador Precision",
-    categoria: "Ojos",
-    descripcion:
-      "Trazo definido y elegante para distintos looks.",
-    imagen: "/img/DelineadorPrecision.jpg",
-    precio: 6500
-  },
-  {
-    id: 7,
-    nombre: "Paleta Sunset Nude",
-    categoria: "Paletas",
-    descripcion:
-      "Tonos cálidos y versátiles para el día o la noche.",
-    imagen: "/img/PaletaSunsetNude.jpg",
-    precio: 15900
-  },
-  {
-    id: 8,
-    nombre: "Paleta Rose Dream",
-    categoria: "Paletas",
-    descripcion:
-      "Selección de tonos rosados y neutros combinables.",
-    imagen: "/img/PaletaRoseDream.jpg",
-    precio: 16900
-  },
-  {
-    id: 9,
-    nombre: "Rubor Soft Rose",
-    categoria: "Rubor",
-    descripcion:
-      "Color delicado para un acabado fresco y natural.",
-    imagen: "/img/rubor.svg",
-    precio: 6900
-  },
-  {
-    id: 10,
-    nombre: "Rubor Peach Glow",
-    categoria: "Rubor",
-    descripcion:
-      "Tono durazno para dar calidez al rostro.",
-    imagen: "/img/rubor.svg",
-    precio: 7200
-  },
-  {
-    id: 11,
-    nombre: "Iluminador Pearl Glow",
-    categoria: "Iluminadores",
-    descripcion:
-      "Luminosidad sutil para destacar puntos del rostro.",
-    imagen: "/img/Iluminadores.jpg",
-    precio: 8900
-  },
-  {
-    id: 12,
-    nombre: "Iluminador Golden Touch",
-    categoria: "Iluminadores",
-    descripcion:
-      "Acabado radiante con reflejos cálidos.",
-    imagen: "/img/Iluminadores.jpg",
-    precio: 9200
-  },
-  {
-    id: 13,
-    nombre: "Set Brochas Essential",
-    categoria: "Brochas",
-    descripcion:
-      "Brochas esenciales para rostro y ojos.",
-    imagen: "/img/brochas.svg",
-    precio: 11900
-  },
-  {
-    id: 14,
-    nombre: "Esponja Beauty Blend",
-    categoria: "Brochas",
-    descripcion:
-      "Accesorio suave para aplicar y difuminar productos.",
-    imagen: "/img/EsponjaBeautyBlend.jpg",
-    precio: 4500
-  },
-  {
-    id: 15,
-    nombre: "Sérum Glow Prep",
-    categoria: "Skincare",
-    descripcion:
-      "Preparación ligera para una apariencia hidratada.",
-    imagen: "/img/SérumGlowPrep.jpg",
-    precio: 10900
-  },
-  {
-    id: 16,
-    nombre: "Crema Soft Hydration",
-    categoria: "Skincare",
-    descripcion:
-      "Hidratación ligera para complementar tu rutina.",
-    imagen: "/img/CremaSoftHydration.jpg",
-    precio: 9900
+const API_BASE = "http://localhost:3000";
+
+function formatearColones(precio) {
+  return `₡${Number(precio).toLocaleString("es-CR", {
+    maximumFractionDigits: 0,
+  })}`;
+}
+
+function obtenerUrlImagen(imagen) {
+  if (!imagen) return "/img/productos.svg";
+
+  if (imagen.startsWith("/uploads/")) {
+    return `${API_BASE}${imagen}`;
   }
-];
+
+  return imagen;
+}
 
 function DetalleProducto() {
   const { id } = useParams();
   const { agregarAlCarrito } = useCarrito();
 
+  const [producto, setProducto] = useState(null);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
 
-  const producto = productos.find(
-    (item) => item.id === Number(id)
-  );
+  useEffect(() => {
+    const controlador = new AbortController();
 
-  if (!producto) {
+    async function cargarProducto() {
+      setCargando(true);
+      setError("");
+      setProducto(null);
+
+      try {
+        const respuesta = await fetch(
+          `${API_BASE}/api/productos`,
+          { signal: controlador.signal }
+        );
+
+        if (!respuesta.ok) {
+          throw new Error("No se pudo consultar el catálogo.");
+        }
+
+        const productos = await respuesta.json();
+
+        const encontrado = productos.find(
+          (item) => String(item.id) === String(id)
+        );
+
+        if (!encontrado) {
+          setError("Producto no encontrado.");
+          return;
+        }
+
+        setProducto({
+          ...encontrado,
+          origen: "local",
+        });
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(
+            "No se pudo cargar el producto. Comprueba tu conexión e inténtalo nuevamente."
+          );
+        }
+      } finally {
+        if (!controlador.signal.aborted) {
+          setCargando(false);
+        }
+      }
+    }
+
+    cargarProducto();
+
+    return () => controlador.abort();
+  }, [id]);
+
+  function agregar() {
+    if (!producto || Number(producto.stock) <= 0) return;
+
+    agregarAlCarrito(producto);
+    setMensaje(`${producto.nombre} agregado al carrito.`);
+  }
+
+  if (cargando) {
     return (
       <main className="seccion">
         <div className="contenedor">
-
-          <p className="etiqueta">
-            BELLA GLOW COSMETICS
-          </p>
-
-          <h1>Producto no encontrado</h1>
-
-          <Link
-            to="/productos"
-            className="boton"
-          >
-            Volver al catálogo
-          </Link>
-
+          <p>Cargando producto...</p>
         </div>
       </main>
     );
   }
 
-  function agregar() {
-    agregarAlCarrito(producto);
+  if (error || !producto) {
+    return (
+      <main className="seccion">
+        <div className="contenedor">
+          <p className="etiqueta">BELLA GLOW COSMETICS</p>
+          <h1>Producto no encontrado</h1>
+          {error && <p role="alert">{error}</p>}
 
-    setMensaje(
-      `✓ ${producto.nombre} agregado al carrito`
+          <Link to="/productos" className="boton">
+            Volver al catálogo
+          </Link>
+        </div>
+      </main>
     );
-
-    setTimeout(() => {
-      setMensaje("");
-    }, 1800);
   }
+
+  const sinStock = Number(producto.stock) <= 0;
 
   return (
     <main className="detalle-producto">
-
       <div className="contenedor">
-
-        <Link
-          to="/productos"
-          className="volver"
-        >
+        <Link to="/productos" className="volver">
           ← Volver al catálogo
         </Link>
 
         <div className="detalle-producto-contenido">
-
           <div className="detalle-producto-imagen">
-
             <img
-              src={producto.imagen}
+              src={obtenerUrlImagen(producto.imagen)}
               alt={producto.nombre}
+              onError={(evento) => {
+                evento.currentTarget.onerror = null;
+                evento.currentTarget.src = "/img/productos.svg";
+              }}
             />
-
           </div>
 
           <div className="detalle-producto-info">
-
             <span className="categoria-mini">
               {producto.categoria}
             </span>
 
-            <h1>
-              {producto.nombre}
-            </h1>
+            <h1>{producto.nombre}</h1>
 
             <p className="detalle-descripcion">
               {producto.descripcion}
             </p>
 
             <p className="detalle-precio">
-              ₡{producto.precio.toLocaleString("es-CR")}
+              {formatearColones(producto.precio)}
+            </p>
+
+            <p>
+              {sinStock
+                ? "Producto agotado"
+                : `Disponibles: ${producto.stock} unidades`}
             </p>
 
             <button
               type="button"
               className="boton"
               onClick={agregar}
+              disabled={sinStock}
             >
-              🛍️ Agregar al carrito
+              {sinStock
+                ? "Sin existencias"
+                : "🛍️ Agregar al carrito"}
             </button>
 
+            {mensaje && (
+              <p role="status" aria-live="polite">
+                ✓ {mensaje}
+              </p>
+            )}
           </div>
-
         </div>
-
       </div>
-
-      {mensaje && (
-        <div
-          className="aviso visible"
-          role="status"
-          aria-live="polite"
-        >
-          {mensaje}
-        </div>
-      )}
-
     </main>
   );
 }

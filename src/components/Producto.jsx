@@ -1,7 +1,41 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFavoritos } from "../context/FavoritosContext.jsx";
 import { useCarrito } from "../context/CarritoContext.jsx";
+
+const API_BASE = "http://localhost:3000";
+
+function obtenerUrlImagen(imagen) {
+  if (!imagen) return "/img/productos.svg";
+
+  // Las imágenes subidas se sirven desde Express.
+  if (imagen.startsWith("/uploads/")) {
+    return `${API_BASE}${imagen}`;
+  }
+
+  // Conserva las imágenes locales y las URLs externas.
+  return imagen;
+}
+
+function formatearPrecio(precio, origen) {
+  const cantidad = Number(precio);
+
+  if (!Number.isFinite(cantidad)) {
+    return "Precio no disponible";
+  }
+
+  if (origen === "externo") {
+    return cantidad.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
+  }
+
+  return `₡${cantidad.toLocaleString("es-CR", {
+    maximumFractionDigits: 0,
+  })}`;
+}
 
 function Producto({
   id,
@@ -9,13 +43,13 @@ function Producto({
   categoria,
   descripcion,
   imagen,
-  precio
+  precio,
+  origen = "local",
 }) {
   const { toggleFavorito, esFavorito } = useFavoritos();
   const { agregarAlCarrito } = useCarrito();
 
   const [aviso, setAviso] = useState("");
-
   const navigate = useNavigate();
 
   const favoritoActivo = esFavorito(id);
@@ -26,7 +60,8 @@ function Producto({
     categoria,
     descripcion,
     imagen,
-    precio
+    precio,
+    origen,
   };
 
   function mostrarAviso(mensaje) {
@@ -39,23 +74,16 @@ function Producto({
 
   function agregar() {
     agregarAlCarrito(producto);
-
-    mostrarAviso(
-      `✓ ${nombre} agregado al carrito`
-    );
+    mostrarAviso(`✓ ${nombre} agregado al carrito`);
   }
 
   function favorito() {
     toggleFavorito(producto);
 
     if (favoritoActivo) {
-      mostrarAviso(
-        `♡ ${nombre} eliminado de favoritos`
-      );
+      mostrarAviso(`♡ ${nombre} eliminado de favoritos`);
     } else {
-      mostrarAviso(
-        `♥ ${nombre} agregado a favoritos`
-      );
+      mostrarAviso(`♥ ${nombre} agregado a favoritos`);
     }
   }
 
@@ -66,48 +94,38 @@ function Producto({
   return (
     <article
       className="tarjeta producto"
-      data-categoria={categoria.toLowerCase()}
-      data-nombre={nombre.toLowerCase()}
+      data-categoria={(categoria || "").toLowerCase()}
+      data-nombre={(nombre || "").toLowerCase()}
     >
-
       <div className="producto-imagen">
-
         <img
-          src={imagen}
+          src={obtenerUrlImagen(imagen)}
           alt={nombre}
+          onError={(evento) => {
+            evento.currentTarget.onerror = null;
+            evento.currentTarget.src = "/img/productos.svg";
+          }}
         />
 
         <button
           type="button"
-          className={`favorito ${
-            favoritoActivo ? "activo" : ""
-          }`}
+          className={`favorito ${favoritoActivo ? "activo" : ""}`}
           onClick={favorito}
           aria-label={`Favorito ${nombre}`}
         >
           {favoritoActivo ? "♥" : "♡"}
         </button>
-
       </div>
 
-      <span className="categoria-mini">
-        {categoria}
-      </span>
+      <span className="categoria-mini">{categoria}</span>
 
-      <h3>
-        {nombre}
-      </h3>
+      <h3>{nombre}</h3>
 
-      <p>
-        {descripcion}
-      </p>
+      <p>{descripcion}</p>
 
-      <strong>
-        ₡{precio.toLocaleString("es-CR")}
-      </strong>
+      <strong>{formatearPrecio(precio, origen)}</strong>
 
       <div className="acciones">
-
         <button
           type="button"
           className="boton secundario"
@@ -116,26 +134,16 @@ function Producto({
           Ver producto
         </button>
 
-        <button
-          type="button"
-          className="boton"
-          onClick={agregar}
-        >
+        <button type="button" className="boton" onClick={agregar}>
           🛍️ Agregar
         </button>
-
       </div>
 
       {aviso && (
-        <div
-          className="aviso visible"
-          role="status"
-          aria-live="polite"
-        >
+        <div className="aviso visible" role="status" aria-live="polite">
           {aviso}
         </div>
       )}
-
     </article>
   );
 }
