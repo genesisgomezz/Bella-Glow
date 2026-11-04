@@ -22,7 +22,7 @@ function Inicio() {
     async function obtenerProductos() {
       try {
         const respuesta = await fetch(
-          "http://localhost:3000/api/productos",
+          "https://bella-glow-backend.onrender.com/api/productos",
           { signal: controlador.signal }
         );
 
@@ -40,8 +40,6 @@ function Inicio() {
           );
         }
 
-        // Todos los productos provienen de MySQL
-        // y conservan su identificador real.
         const productosLocales = datos.map((producto) => ({
           ...producto,
           id: Number(producto.id),

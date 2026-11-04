@@ -17,7 +17,6 @@ function PanelAdministracion() {
         </p>
 
         <div className="admin-tarjetas">
-          {/* PRODUCTOS: ADMIN y EMPLEADO */}
           <article className="admin-tarjeta">
             <div className="admin-icono">🛍️</div>
             <h2>Productos</h2>
@@ -31,7 +30,6 @@ function PanelAdministracion() {
             </Link>
           </article>
 
-          {/* PERSONAL: SOLO ADMIN */}
           {esAdmin && (
             <article className="admin-tarjeta">
               <div className="admin-icono">👥</div>
@@ -47,7 +45,6 @@ function PanelAdministracion() {
             </article>
           )}
 
-          {/* PEDIDOS: ADMIN y EMPLEADO */}
           <article className="admin-tarjeta">
             <div className="admin-icono">📦</div>
             <h2>Pedidos</h2>
@@ -61,7 +58,6 @@ function PanelAdministracion() {
             </Link>
           </article>
 
-          {/* CLIENTES: ADMIN y EMPLEADO */}
           <article className="admin-tarjeta">
             <div className="admin-icono">👤</div>
             <h2>Clientes</h2>
@@ -76,7 +72,6 @@ function PanelAdministracion() {
             </Link>
           </article>
 
-          {/* TIENDA: ADMIN y EMPLEADO */}
           <article className="admin-tarjeta admin-tarjeta-tienda">
             <div className="admin-icono">💗</div>
             <h2>Tienda</h2>

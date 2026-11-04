@@ -12,7 +12,6 @@ import {
 
 const router = Router();
 
-// Configuración de imágenes
 const carpetaImagenes = path.join(process.cwd(), "uploads");
 fs.mkdirSync(carpetaImagenes, { recursive: true });
 
@@ -49,7 +48,6 @@ const upload = multer({
   },
 });
 
-// SUBIR IMAGEN: solo ADMIN y EMPLEADO
 router.post(
   "/subir-imagen",
   verificarToken,
@@ -83,7 +81,6 @@ router.post(
   }
 );
 
-// CONSULTAR PRODUCTOS: público
 router.get("/", async (_req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -113,7 +110,6 @@ router.get("/", async (_req, res) => {
   }
 });
 
-// REGISTRAR PRODUCTO: solo ADMIN y EMPLEADO
 router.post(
   "/",
   verificarToken,
@@ -170,7 +166,6 @@ router.post(
   }
 );
 
-// MODIFICAR PRODUCTO: solo ADMIN y EMPLEADO
 router.put(
   "/:id",
   verificarToken,
@@ -240,7 +235,6 @@ router.put(
   }
 );
 
-// ELIMINAR PRODUCTO: solo ADMIN y EMPLEADO
 router.delete(
   "/:id",
   verificarToken,

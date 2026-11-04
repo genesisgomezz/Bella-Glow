@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://bella-glow-backend.onrender.com";
 
 function formatearColones(valor) {
   return `₡${Number(valor || 0).toLocaleString("es-CR", {

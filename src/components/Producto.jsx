@@ -4,17 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useFavoritos } from "../context/FavoritosContext.jsx";
 import { useCarrito } from "../context/CarritoContext.jsx";
 
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://bella-glow-backend.onrender.com";
 
 function obtenerUrlImagen(imagen) {
   if (!imagen) return "/img/productos.svg";
 
-  // Las imágenes subidas se sirven desde Express.
   if (imagen.startsWith("/uploads/")) {
     return `${API_BASE}${imagen}`;
   }
 
-  // Conserva las imágenes locales y las URLs externas.
   return imagen;
 }
 

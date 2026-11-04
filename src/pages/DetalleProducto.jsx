@@ -1,9 +1,8 @@
-
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCarrito } from "../context/CarritoContext.jsx";
 
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://bella-glow-backend.onrender.com";
 
 function formatearColones(precio) {
   return `₡${Number(precio).toLocaleString("es-CR", {

@@ -1,8 +1,7 @@
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const API_AUTH = "http://localhost:3000/api/auth";
+const API_AUTH = "https://bella-glow-backend.onrender.com/api/auth";
 
 function AdministrarUsuarios() {
   const { token, usuario } = useAuth();

@@ -29,10 +29,6 @@ function obtenerSecretoJWT(): string {
   return secreto;
 }
 
-/* =========================================================
-   REGISTRO PÚBLICO DE CLIENTES
-   ========================================================= */
-
 router.post("/registro", async (req, res) => {
   try {
     const { nombre, correo, contrasena } = req.body;
@@ -130,10 +126,6 @@ router.post("/registro", async (req, res) => {
   }
 });
 
-/* =========================================================
-   INICIAR SESIÓN
-   ========================================================= */
-
 router.post("/login", async (req, res) => {
   try {
     const { correo, contrasena } = req.body;
@@ -206,11 +198,6 @@ router.post("/login", async (req, res) => {
     });
   }
 });
-
-/* =========================================================
-   CREAR PERSONAL
-   SOLO ADMIN
-   ========================================================= */
 
 router.post(
   "/crear-personal",
@@ -324,11 +311,6 @@ router.post(
   }
 );
 
-/* =========================================================
-   CONSULTAR PERSONAL
-   SOLO ADMIN
-   ========================================================= */
-
 router.get(
   "/personal",
   verificarToken,
@@ -352,11 +334,6 @@ router.get(
     }
   }
 );
-
-/* =========================================================
-   ACTIVAR O DESACTIVAR PERSONAL
-   SOLO ADMIN
-   ========================================================= */
 
 router.patch(
   "/personal/:id/estado",
@@ -456,10 +433,6 @@ router.patch(
   }
 );
 
-/* =========================================================
-   GESTIÓN DE CLIENTES
-   ========================================================= */
-
 router.get(
   "/clientes",
   verificarToken,
@@ -483,11 +456,6 @@ router.get(
     }
   }
 );
-
-/*
-  REGISTRAR CLIENTE DESDE ADMINISTRACIÓN
-
-*/
 
 router.post(
   "/crear-cliente",
@@ -669,7 +637,6 @@ router.patch(
   }
 );
 
-/* MODIFICAR CLIENTE: ADMIN y EMPLEADO */
 router.put(
 "/clientes/:id",
 verificarToken,
@@ -679,7 +646,6 @@ try {
 const id = Number(req.params.id);
 const { nombre, correo } = req.body;
 
-  // Validar el identificador
   if (!Number.isSafeInteger(id) || id <= 0) {
     res.status(400).json({
       mensaje: "El identificador del cliente no es válido.",
@@ -687,7 +653,6 @@ const { nombre, correo } = req.body;
     return;
   }
 
-  // Validar los datos recibidos
   if (
     typeof nombre !== "string" ||
     typeof correo !== "string" ||
@@ -717,7 +682,6 @@ const { nombre, correo } = req.body;
     return;
   }
 
-  // Confirmar que el cliente existe
   const [clientes] = await pool.execute<Usuario[]>(
     `SELECT id
      FROM usuarios
@@ -733,7 +697,6 @@ const { nombre, correo } = req.body;
     return;
   }
 
-  // Evitar que el correo se repita en otra cuenta
   const [correosExistentes] = await pool.execute<Usuario[]>(
     `SELECT id
      FROM usuarios
@@ -749,7 +712,6 @@ const { nombre, correo } = req.body;
     return;
   }
 
-  // Actualizar únicamente los datos básicos del cliente
   await pool.execute<ResultSetHeader>(
     `UPDATE usuarios
      SET nombre = ?, correo = ?

@@ -1,10 +1,9 @@
-
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const API_PRODUCTOS = "http://localhost:3000/api/productos";
-const API_CATEGORIAS = "http://localhost:3000/api/categorias";
-const API_BASE = "http://localhost:3000";
+const API_PRODUCTOS = "https://bella-glow-backend.onrender.com/api/productos";
+const API_CATEGORIAS = "https://bella-glow-backend.onrender.com/api/categorias";
+const API_BASE = "https://bella-glow-backend.onrender.com";
 
 const formularioInicial = {
   nombre: "",

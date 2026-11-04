@@ -29,7 +29,6 @@ function App() {
       <Carrito />
 
       <Routes>
-        {/* Páginas públicas */}
         <Route path="/" element={<Inicio />} />
 
         <Route
@@ -57,7 +56,6 @@ function App() {
           element={<Registro />}
         />
 
-        {/* Pedidos del cliente: solo CLIENTE */}
         <Route
           element={
             <RutaProtegida rolesPermitidos={["CLIENTE"]} />
@@ -69,7 +67,6 @@ function App() {
           />
         </Route>
 
-        {/* Administración: ADMIN y EMPLEADO */}
         <Route
           element={
             <RutaProtegida
@@ -93,7 +90,6 @@ function App() {
           />
         </Route>
 
-        {/* Gestión de personal: solo ADMIN */}
         <Route
           element={
             <RutaProtegida rolesPermitidos={["ADMIN"]} />
@@ -105,7 +101,6 @@ function App() {
           />
         </Route>
 
-        {/* Gestión de clientes: ADMIN y EMPLEADO */}
         <Route
           element={
             <RutaProtegida
@@ -119,7 +114,6 @@ function App() {
           />
         </Route>
 
-        {/* Página no encontrada */}
         <Route
           path="*"
           element={<NoEncontrado />}

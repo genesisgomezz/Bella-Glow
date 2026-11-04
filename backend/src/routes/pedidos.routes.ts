@@ -1,4 +1,3 @@
-
 import { Router } from "express";
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
 import pool from "../confit/database";
@@ -24,7 +23,6 @@ interface Pedido extends RowDataPacket {
   estado: string;
 }
 
-// REGISTRAR PEDIDO: cliente autenticado
 router.post(
   "/",
   verificarToken,
@@ -182,8 +180,6 @@ router.post(
   }
 );
 
-
-/* CONSULTAR TODOS LOS PEDIDOS: solo ADMIN y EMPLEADO */
 router.get(
   "/",
   verificarToken,
@@ -214,8 +210,6 @@ router.get(
   }
 );
 
-
-/* ACTUALIZAR ESTADO DEL PEDIDO: solo ADMIN y EMPLEADO */
 router.patch(
   "/:id/estado",
   verificarToken,
@@ -225,7 +219,7 @@ router.patch(
       const pedidoId = Number(req.params.id);
       const { estado } = req.body as { estado?: string };
 
-      // Validar identificador
+      
       if (!Number.isSafeInteger(pedidoId) || pedidoId <= 0) {
         res.status(400).json({
           mensaje: "El identificador del pedido no es válido.",
@@ -233,7 +227,6 @@ router.patch(
         return;
       }
 
-      // Solo se permite elegir estos estados finales
       if (estado !== "PAGADO" && estado !== "CANCELADO") {
         res.status(400).json({
           mensaje: "El estado debe ser PAGADO o CANCELADO.",
@@ -241,8 +234,6 @@ router.patch(
         return;
       }
 
-      // Solo permitir cambios si el pedido está pendiente.
-      // El UPDATE condicional evita cambios simultáneos incompatibles.
       const [resultado] = await pool.execute<ResultSetHeader>(
         `UPDATE pedidos
          SET estado = ?
@@ -317,7 +308,6 @@ router.get(
   }
 );
 
-// CONSULTAR DETALLE: solo el propietario del pedido
 router.get(
   "/:id",
   verificarToken,

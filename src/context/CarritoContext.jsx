@@ -1,17 +1,24 @@
-
 import {
   createContext,
   useContext,
   useEffect,
   useState,
 } from "react";
+import { useAuth } from "./AuthContext";
 
 const CarritoContext = createContext(null);
-const CLAVE_CARRITO = "bellaGlowCarrito";
 
-function recuperarCarrito() {
+function obtenerClave(usuario) {
+  const id = usuario?.id ?? usuario?.usuario_id;
+
+  return id
+    ? `bellaGlowCarrito_${id}`
+    : "bellaGlowCarrito_invitado";
+}
+
+function recuperarCarrito(clave) {
   try {
-    const guardado = localStorage.getItem(CLAVE_CARRITO);
+    const guardado = localStorage.getItem(clave);
 
     if (!guardado) return [];
 
@@ -23,22 +30,55 @@ function recuperarCarrito() {
 }
 
 export function CarritoProvider({ children }) {
-  const [carrito, setCarrito] = useState(recuperarCarrito);
+  const { usuario } = useAuth();
 
-  // Guardar automáticamente cada cambio del carrito.
+  const claveActual = obtenerClave(usuario);
+
+  const [datosCarrito, setDatosCarrito] = useState(() => ({
+    clave: claveActual,
+    productos: recuperarCarrito(claveActual),
+  }));
+
   useEffect(() => {
+    setDatosCarrito({
+      clave: claveActual,
+      productos: recuperarCarrito(claveActual),
+    });
+  }, [claveActual]);
+
+  useEffect(() => {
+    if (datosCarrito.clave !== claveActual) return;
+
     try {
       localStorage.setItem(
-        CLAVE_CARRITO,
-        JSON.stringify(carrito)
+        claveActual,
+        JSON.stringify(datosCarrito.productos)
       );
     } catch (error) {
       console.error("No se pudo guardar el carrito:", error);
     }
-  }, [carrito]);
+  }, [datosCarrito, claveActual]);
+
+  const carrito =
+    datosCarrito.clave === claveActual
+      ? datosCarrito.productos
+      : [];
+
+  function actualizarCarrito(actualizar) {
+    setDatosCarrito((actual) => {
+      if (actual.clave !== claveActual) {
+        return actual;
+      }
+
+      return {
+        ...actual,
+        productos: actualizar(actual.productos),
+      };
+    });
+  }
 
   function agregarAlCarrito(producto) {
-    setCarrito((actual) => {
+    actualizarCarrito((actual) => {
       const existe = actual.find(
         (item) => item.id === producto.id
       );
@@ -63,13 +103,13 @@ export function CarritoProvider({ children }) {
   }
 
   function quitarDelCarrito(id) {
-    setCarrito((actual) =>
+    actualizarCarrito((actual) =>
       actual.filter((item) => item.id !== id)
     );
   }
 
   function aumentarCantidad(id) {
-    setCarrito((actual) =>
+    actualizarCarrito((actual) =>
       actual.map((item) =>
         item.id === id
           ? { ...item, cantidad: item.cantidad + 1 }
@@ -79,7 +119,7 @@ export function CarritoProvider({ children }) {
   }
 
   function disminuirCantidad(id) {
-    setCarrito((actual) =>
+    actualizarCarrito((actual) =>
       actual
         .map((item) =>
           item.id === id
@@ -91,7 +131,7 @@ export function CarritoProvider({ children }) {
   }
 
   function vaciarCarrito() {
-    setCarrito([]);
+    actualizarCarrito(() => []);
   }
 
   const cantidadTotal = carrito.reduce(

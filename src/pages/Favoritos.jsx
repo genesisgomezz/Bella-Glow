@@ -36,7 +36,6 @@ function Favoritos() {
                 key={producto.id}
               >
 
-                {/* IMAGEN + CORAZÓN */}
                 <div className="producto-imagen">
 
                   <img

@@ -3,10 +3,9 @@ import { useState } from "react";
 import { useCarrito } from "../context/CarritoContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://bella-glow-backend.onrender.com";
 
 function precioEnColones(producto) {
-  // Los pedidos solo admiten productos registrados en MySQL.
   return Number(producto.precio) || 0;
 }
 

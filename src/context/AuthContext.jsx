@@ -8,7 +8,7 @@ import {
 
 const AuthContext = createContext(null);
 
-const API_URL = "http://localhost:3000/api/auth";
+const API_URL = "https://bella-glow-backend.onrender.com/api/auth";
 
 const CLAVE_TOKEN = "bellaGlowToken";
 const CLAVE_USUARIO = "bellaGlowUsuario";
@@ -62,15 +62,12 @@ export function AuthProvider({ children }) {
     setUsuario(null);
   }, []);
 
-  // Limpia sesiones incompletas o tokens que ya expiraron.
   useEffect(() => {
     if (!token || !usuario || tokenExpirado(token)) {
       cerrarSesion();
     }
   }, [token, usuario, cerrarSesion]);
 
-  // Permite realizar solicitudes autenticadas.
-  // Si el Backend responde 401, se cierra la sesión local.
   const fetchAutenticado = useCallback(
     async (url, opciones = {}) => {
       if (!token || tokenExpirado(token)) {

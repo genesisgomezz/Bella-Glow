@@ -1,4 +1,3 @@
-
 import {
   createContext,
   useContext,
@@ -25,7 +24,6 @@ function recuperarFavoritos() {
 export function FavoritosProvider({ children }) {
   const [favoritos, setFavoritos] = useState(recuperarFavoritos);
 
-  // Guardar los favoritos cada vez que cambien.
   useEffect(() => {
     try {
       localStorage.setItem(
