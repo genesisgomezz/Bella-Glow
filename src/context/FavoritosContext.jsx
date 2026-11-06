@@ -1,3 +1,4 @@
+
 import {
   createContext,
   useContext,
@@ -5,16 +6,28 @@ import {
   useState,
 } from "react";
 
-const FavoritosContext = createContext(null);
-const CLAVE_FAVORITOS = "bellaGlowFavoritos";
+import { useAuth } from "./AuthContext";
 
-function recuperarFavoritos() {
+const FavoritosContext = createContext(null);
+
+function obtenerIdUsuario(usuario) {
+  return usuario?.id ?? usuario?.usuario_id ?? "invitado";
+}
+
+function obtenerClave(idUsuario) {
+  return `bellaGlowFavoritos_${idUsuario}`;
+}
+
+function recuperarFavoritos(idUsuario) {
   try {
-    const guardados = localStorage.getItem(CLAVE_FAVORITOS);
+    const guardados = localStorage.getItem(
+      obtenerClave(idUsuario)
+    );
 
     if (!guardados) return [];
 
     const productos = JSON.parse(guardados);
+
     return Array.isArray(productos) ? productos : [];
   } catch {
     return [];
@@ -22,32 +35,66 @@ function recuperarFavoritos() {
 }
 
 export function FavoritosProvider({ children }) {
-  const [favoritos, setFavoritos] = useState(recuperarFavoritos);
+  const { usuario } = useAuth();
 
+  const idUsuario = obtenerIdUsuario(usuario);
+
+  const [estado, setEstado] = useState(() => ({
+    idUsuario,
+    productos: recuperarFavoritos(idUsuario),
+  }));
+
+  // Cargar los favoritos cuando cambia la cuenta
   useEffect(() => {
+    setEstado({
+      idUsuario,
+      productos: recuperarFavoritos(idUsuario),
+    });
+  }, [idUsuario]);
+
+  // Evitar guardar favoritos de otra cuenta
+  useEffect(() => {
+    if (estado.idUsuario !== idUsuario) return;
+
     try {
       localStorage.setItem(
-        CLAVE_FAVORITOS,
-        JSON.stringify(favoritos)
+        obtenerClave(idUsuario),
+        JSON.stringify(estado.productos)
       );
     } catch (error) {
-      console.error("No se pudieron guardar los favoritos:", error);
+      console.error(
+        "No se pudieron guardar los favoritos:",
+        error
+      );
     }
-  }, [favoritos]);
+  }, [estado, idUsuario]);
+
+  const favoritos =
+    estado.idUsuario === idUsuario
+      ? estado.productos
+      : [];
 
   function toggleFavorito(producto) {
-    setFavoritos((actuales) => {
+    setEstado((actual) => {
+      const actuales =
+        actual.idUsuario === idUsuario
+          ? actual.productos
+          : [];
+
       const existe = actuales.some(
         (item) => item.id === producto.id
       );
 
-      if (existe) {
-        return actuales.filter(
-          (item) => item.id !== producto.id
-        );
-      }
+      const nuevos = existe
+        ? actuales.filter(
+            (item) => item.id !== producto.id
+          )
+        : [...actuales, producto];
 
-      return [...actuales, producto];
+      return {
+        idUsuario,
+        productos: nuevos,
+      };
     });
   }
 
@@ -69,6 +116,13 @@ export function FavoritosProvider({ children }) {
 }
 
 export function useFavoritos() {
-  return useContext(FavoritosContext);
-}
+  const contexto = useContext(FavoritosContext);
 
+  if (!contexto) {
+    throw new Error(
+      "useFavoritos debe utilizarse dentro de FavoritosProvider."
+    );
+  }
+
+  return contexto;
+}
