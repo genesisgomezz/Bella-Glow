@@ -348,7 +348,6 @@ function AdministrarPedidos() {
         </div>
 
         <p className="panel-descripcion">
-          Nota: cambiar un pedido a “Pagado” no realiza un cobro en línea.
         </p>
       </div>
     </main>
