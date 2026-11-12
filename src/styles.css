@@ -3481,3 +3481,14 @@ footer {
 .app.modo-oscuro .mis-pedidos-pagina .pedido-tarjeta p {
   color: var(--texto);
 }
+
+/* Corrección de contraste en Mis pedidos */
+.app.modo-oscuro .mis-pedidos-pagina .pedido-total span,
+.app.modo-oscuro .mis-pedidos-pagina .pedido-total-detalle span {
+  color: #d9bdcc;
+}
+
+.app.modo-oscuro .mis-pedidos-pagina .pedido-total strong,
+.app.modo-oscuro .mis-pedidos-pagina .pedido-total-detalle strong {
+  color: #fff0f7;
+}
