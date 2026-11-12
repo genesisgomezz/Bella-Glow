@@ -208,7 +208,6 @@ function AdministrarUsuarios() {
           </p>
         )}
 
-        {/* CONFIRMACIÓN INTEGRADA */}
         {usuarioConfirmacion && (
           <div
             className="confirmacion-fondo"
@@ -275,7 +274,6 @@ function AdministrarUsuarios() {
           </div>
         )}
 
-        {/* FORMULARIO PARA CREAR PERSONAL */}
         <section className="seccion-formulario-personal">
           <div className="encabezado-seccion-admin">
             <span className="admin-icono">👤</span>
@@ -351,7 +349,6 @@ function AdministrarUsuarios() {
           </form>
         </section>
 
-        {/* TABLA DE PERSONAL */}
         <section className="seccion-tabla-personal">
           <div className="encabezado-seccion-admin">
             <span className="admin-icono">👥</span>

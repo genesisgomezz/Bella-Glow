@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useCarrito } from "../context/CarritoContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -224,6 +223,12 @@ function Carrito() {
 
                     <div className="info-carrito">
                       <h3>{producto.nombre}</h3>
+                      {producto.noDisponible && (
+                        <p className="aviso-producto-no-disponible">
+                          Este producto ya no está disponible en el catálogo.
+                          Elimínalo del carrito para continuar.
+                        </p>
+                      )}
 
                       <p className="precio-unitario">
                         {formatearColones(precioUnitario)} cada uno
@@ -291,7 +296,7 @@ function Carrito() {
               <button
                 type="button"
                 className="boton"
-                disabled={comprando}
+                disabled={comprando || carrito.some((producto) => producto.noDisponible)}
                 onClick={finalizarCompra}
               >
                 {comprando

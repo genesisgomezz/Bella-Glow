@@ -3009,7 +3009,7 @@ footer {
   line-height: 1.2;
 }
 
-/* Formulario: aprovechar el ancho disponible */
+/* Formulario*/
 .pagina-admin-usuarios .formulario-admin-personal {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3127,7 +3127,7 @@ footer {
   border-bottom: none;
 }
 
-/* Botones de acciones: separados y alineados */
+/* Botones de acciones */
 .pagina-admin-usuarios .acciones-tabla-clientes {
   display: flex;
   flex-direction: row;
@@ -3217,4 +3217,267 @@ footer {
   .pagina-admin-usuarios .acciones-tabla-clientes {
     gap: 8px;
   }
+}
+
+/* =========================
+   MODO OSCURO GLOBAL
+========================= */
+.app.modo-oscuro main,
+.app.modo-oscuro .seccion,
+.app.modo-oscuro .panel-administracion,
+.app.modo-oscuro .pagina-admin-productos,
+.app.modo-oscuro .pagina-admin-usuarios,
+.app.modo-oscuro .mis-pedidos-pagina,
+.app.modo-oscuro .mis-pedidos-contenedor {
+  background-color: var(--fondo);
+  color: var(--texto);
+}
+
+.app.modo-oscuro h1,
+.app.modo-oscuro h2,
+.app.modo-oscuro h3,
+.app.modo-oscuro h4,
+.app.modo-oscuro label,
+.app.modo-oscuro .panel-descripcion,
+.app.modo-oscuro .mis-pedidos-intro,
+.app.modo-oscuro .pedido-identificacion,
+.app.modo-oscuro .pedido-producto-info,
+.app.modo-oscuro .pedido-subtotal,
+.app.modo-oscuro .pedido-total-detalle {
+  color: var(--titulo);
+}
+
+.app.modo-oscuro p,
+.app.modo-oscuro td,
+.app.modo-oscuro th {
+  color: inherit;
+}
+
+.app.modo-oscuro .admin-tarjeta,
+.app.modo-oscuro .pedido-tarjeta,
+.app.modo-oscuro .tarjeta-resumen-clientes,
+.app.modo-oscuro .formulario-admin,
+.app.modo-oscuro .formulario-admin-personal,
+.app.modo-oscuro .seccion-formulario-personal,
+.app.modo-oscuro .tabla-personal-contenedor,
+.app.modo-oscuro .tabla-personal,
+.app.modo-oscuro .pedido-detalle,
+.app.modo-oscuro .pedidos-vacios,
+.app.modo-oscuro .confirmacion-modal,
+.app.modo-oscuro .confirmacion-fondo {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .tabla-personal th,
+.app.modo-oscuro .tabla-personal td,
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal th,
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal td {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro input,
+.app.modo-oscuro select,
+.app.modo-oscuro textarea {
+  background-color: #21151d;
+  color: #f6eaf2;
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro input::placeholder,
+.app.modo-oscuro textarea::placeholder {
+  color: #c5aebc;
+}
+
+.app.modo-oscuro .pedido-resumen,
+.app.modo-oscuro .pedido-pie,
+.app.modo-oscuro .pedido-producto,
+.app.modo-oscuro .herramientas-personal,
+.app.modo-oscuro .resumen-personal,
+.app.modo-oscuro .encabezado-seccion-admin {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .estado-api,
+.app.modo-oscuro .error-admin,
+.app.modo-oscuro .mensaje-admin,
+.app.modo-oscuro .pedidos-error,
+.app.modo-oscuro .pedidos-mensaje {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .modal,
+.app.modo-oscuro dialog {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .modal h2,
+.app.modo-oscuro .modal h3,
+.app.modo-oscuro dialog h2,
+.app.modo-oscuro dialog h3,
+.app.modo-oscuro dialog strong {
+  color: var(--titulo);
+}
+
+.app.modo-oscuro .tabla-personal tbody tr,
+.app.modo-oscuro .tabla-personal tbody tr:nth-child(even),
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal tbody tr:nth-child(even) {
+  background: #241720;
+}
+
+.app.modo-oscuro .tabla-personal tbody tr:hover,
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal tbody tr:hover {
+  background: #392332;
+}
+
+.app.modo-oscuro .pagina-admin-productos .producto-admin,
+.app.modo-oscuro .pagina-admin-productos .formulario-admin {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.aviso-producto-no-disponible {
+  color: #b42318;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.app.modo-oscuro .aviso-producto-no-disponible {
+  color: #ffaaa3;
+}
+
+/* =========================================================
+   AJUSTES DE CONTRASTE DEL MODO OSCURO
+========================================================= */
+
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin h2,
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin label,
+.app.modo-oscuro .pagina-admin-productos .etiqueta,
+.app.modo-oscuro .pagina-admin-productos h1,
+.app.modo-oscuro .pagina-admin-productos > .contenedor > p {
+  color: var(--titulo);
+}
+
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin input,
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin select,
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin textarea {
+  background: #21151d;
+  color: #f6eaf2;
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin input::placeholder,
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin textarea::placeholder {
+  color: #c5aebc;
+  opacity: 1;
+}
+
+.app.modo-oscuro .pagina-admin-productos form.formulario-admin select option {
+  background: #21151d;
+  color: #f6eaf2;
+}
+
+.app.modo-oscuro .pagina-admin-productos .producto-admin {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .pagina-admin-productos .producto-admin h3,
+.app.modo-oscuro .pagina-admin-productos .producto-admin p {
+  color: var(--texto);
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .seccion-tabla-personal,
+.app.modo-oscuro .pagina-admin-usuarios .seccion-formulario-personal,
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal-contenedor,
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal,
+.app.modo-oscuro .pagina-admin-usuarios .tarjeta-resumen-clientes {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .encabezado-seccion-admin {
+  background: #21151d;
+  color: var(--texto);
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .encabezado-seccion-admin h2,
+.app.modo-oscuro .pagina-admin-usuarios .encabezado-seccion-admin p,
+.app.modo-oscuro .pagina-admin-usuarios .tarjeta-resumen-clientes p,
+.app.modo-oscuro .pagina-admin-usuarios .tarjeta-resumen-clientes strong,
+.app.modo-oscuro .pagina-admin-usuarios .seccion-tabla-personal > p,
+.app.modo-oscuro .pagina-admin-usuarios .seccion-formulario-personal label {
+  color: var(--texto);
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .herramientas-personal input,
+.app.modo-oscuro .pagina-admin-usuarios .herramientas-personal select,
+.app.modo-oscuro .pagina-admin-usuarios .formulario-admin-personal input,
+.app.modo-oscuro .pagina-admin-usuarios .formulario-admin-personal select {
+  background: #21151d;
+  color: #f6eaf2;
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .herramientas-personal input::placeholder,
+.app.modo-oscuro .pagina-admin-usuarios .formulario-admin-personal input::placeholder {
+  color: #c5aebc;
+  opacity: 1;
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal th {
+  background: #382332;
+  color: #fff;
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal td {
+  background: #2a1a24;
+  color: #f6eaf2;
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal tbody tr:nth-child(even) td {
+  background: #241720;
+}
+
+.app.modo-oscuro .pagina-admin-usuarios .tabla-personal tbody tr:hover td {
+  background: #392332;
+}
+
+.app.modo-oscuro .panel-administracion .admin-tarjeta,
+.app.modo-oscuro .panel-administracion .pedido-tarjeta,
+.app.modo-oscuro .panel-administracion .pedido-detalle,
+.app.modo-oscuro .mis-pedidos-pagina .pedido-tarjeta,
+.app.modo-oscuro .mis-pedidos-pagina .pedido-detalle {
+  background: var(--rosa);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.app.modo-oscuro .panel-administracion .admin-tarjeta h2,
+.app.modo-oscuro .panel-administracion .admin-tarjeta p,
+.app.modo-oscuro .panel-administracion .pedido-tarjeta h2,
+.app.modo-oscuro .panel-administracion .pedido-tarjeta p,
+.app.modo-oscuro .mis-pedidos-pagina .pedido-tarjeta h2,
+.app.modo-oscuro .mis-pedidos-pagina .pedido-tarjeta p {
+  color: var(--texto);
 }

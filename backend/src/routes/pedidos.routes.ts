@@ -281,7 +281,6 @@ router.patch(
   }
 );
 
-// CONSULTAR PEDIDOS DEL CLIENTE AUTENTICADO
 router.get(
   "/mis-pedidos",
   verificarToken,

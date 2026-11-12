@@ -1,4 +1,3 @@
-
 import {
   createContext,
   useContext,
@@ -68,6 +67,55 @@ export function FavoritosProvider({ children }) {
       );
     }
   }, [estado, idUsuario]);
+
+
+  // Actualiza los datos guardados cuando el administrador modifica el catálogo.
+  useEffect(() => {
+    let activo = true;
+
+    async function sincronizarCatalogo() {
+      try {
+        const respuesta = await fetch(
+          "https://bella-glow-backend.onrender.com/api/productos"
+        );
+        if (!respuesta.ok) return;
+        const productosActuales = await respuesta.json();
+        if (!activo || !Array.isArray(productosActuales)) return;
+
+        const porId = new Map(
+          productosActuales.map((producto) => [String(producto.id), producto])
+        );
+
+        setEstado((actual) => {
+          if (actual.idUsuario !== idUsuario) return actual;
+          return {
+            ...actual,
+            productos: actual.productos.map((item) => {
+              const actualizado = porId.get(String(item.id));
+              return actualizado ? { ...item, ...actualizado } : item;
+            }),
+          };
+        });
+      } catch (error) {
+        console.warn("No se pudieron sincronizar los favoritos:", error);
+      }
+    }
+
+    sincronizarCatalogo();
+    const alVolver = () => {
+      if (document.visibilityState === "visible") sincronizarCatalogo();
+    };
+    window.addEventListener("focus", sincronizarCatalogo);
+    window.addEventListener("bellaGlowCatalogoActualizado", sincronizarCatalogo);
+    document.addEventListener("visibilitychange", alVolver);
+
+    return () => {
+      activo = false;
+      window.removeEventListener("focus", sincronizarCatalogo);
+      window.removeEventListener("bellaGlowCatalogoActualizado", sincronizarCatalogo);
+      document.removeEventListener("visibilitychange", alVolver);
+    };
+  }, [idUsuario]);
 
   const favoritos =
     estado.idUsuario === idUsuario

@@ -69,7 +69,6 @@ function AdministrarProductos() {
     cargarDatos();
   }, []);
 
-  // Crear una vista previa cuando se selecciona una imagen
   useEffect(() => {
     if (!imagenSeleccionada) {
       setVistaPrevia("");
@@ -220,6 +219,7 @@ function AdministrarProductos() {
 
       limpiarFormulario();
       await cargarDatos();
+      window.dispatchEvent(new Event("bellaGlowCatalogoActualizado"));
     } catch (error) {
       console.error(error);
       setMensaje(
@@ -265,6 +265,7 @@ function AdministrarProductos() {
       }
 
       await cargarDatos();
+      window.dispatchEvent(new Event("bellaGlowCatalogoActualizado"));
     } catch (error) {
       setMensaje(
         error.message || "Ocurrió un error al eliminar."

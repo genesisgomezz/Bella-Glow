@@ -1,4 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { useCarrito } from "../context/CarritoContext.jsx";
 import { useFavoritos } from "../context/FavoritosContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -15,10 +16,20 @@ function Header() {
     location.pathname === "/iniciar-sesion" ||
     location.pathname === "/registro";
 
-  function cambiarTema() {
+  useEffect(() => {
+    const temaGuardado = localStorage.getItem("bellaGlowTema");
     document
       .getElementById("app")
-      ?.classList.toggle("modo-oscuro");
+      ?.classList.toggle("modo-oscuro", temaGuardado === "oscuro");
+  }, []);
+
+  function cambiarTema() {
+    const app = document.getElementById("app");
+    if (!app) return;
+
+    const activar = !app.classList.contains("modo-oscuro");
+    app.classList.toggle("modo-oscuro", activar);
+    localStorage.setItem("bellaGlowTema", activar ? "oscuro" : "claro");
   }
 
   function irASeccion(seccion) {

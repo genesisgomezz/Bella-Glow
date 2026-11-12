@@ -59,6 +59,55 @@ export function CarritoProvider({ children }) {
     }
   }, [datosCarrito, claveActual]);
 
+  useEffect(() => {
+    let activo = true;
+
+    async function sincronizarCatalogo() {
+      try {
+        const respuesta = await fetch(
+          "https://bella-glow-backend.onrender.com/api/productos"
+        );
+        if (!respuesta.ok) return;
+        const productosActuales = await respuesta.json();
+        if (!activo || !Array.isArray(productosActuales)) return;
+
+        const porId = new Map(
+          productosActuales.map((producto) => [String(producto.id), producto])
+        );
+
+        setDatosCarrito((actual) => {
+          if (actual.clave !== claveActual) return actual;
+          return {
+            ...actual,
+            productos: actual.productos.map((item) => {
+              const actualizado = porId.get(String(item.id));
+              return actualizado
+                ? { ...item, ...actualizado, cantidad: item.cantidad, origen: item.origen || "local" }
+                : { ...item, noDisponible: true };
+            }),
+          };
+        });
+      } catch (error) {
+        console.warn("No se pudo sincronizar el carrito con el catálogo:", error);
+      }
+    }
+
+    sincronizarCatalogo();
+    const alVolver = () => {
+      if (document.visibilityState === "visible") sincronizarCatalogo();
+    };
+    window.addEventListener("focus", sincronizarCatalogo);
+    window.addEventListener("bellaGlowCatalogoActualizado", sincronizarCatalogo);
+    document.addEventListener("visibilitychange", alVolver);
+
+    return () => {
+      activo = false;
+      window.removeEventListener("focus", sincronizarCatalogo);
+      window.removeEventListener("bellaGlowCatalogoActualizado", sincronizarCatalogo);
+      document.removeEventListener("visibilitychange", alVolver);
+    };
+  }, [claveActual]);
+
   const carrito =
     datosCarrito.clave === claveActual
       ? datosCarrito.productos

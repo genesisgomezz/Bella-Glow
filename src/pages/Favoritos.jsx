@@ -1,6 +1,21 @@
 import { Link } from "react-router-dom";
 import { useFavoritos } from "../context/FavoritosContext.jsx";
 
+const API_BASE = "https://bella-glow-backend.onrender.com";
+
+function obtenerUrlImagen(imagen) {
+  if (!imagen) return "/img/productos.svg";
+  if (imagen.startsWith("/uploads/")) return `${API_BASE}${imagen}`;
+  return imagen;
+}
+
+function formatearPrecio(precio) {
+  const valor = Number(precio);
+  return Number.isFinite(valor)
+    ? `₡${valor.toLocaleString("es-CR", { maximumFractionDigits: 0 })}`
+    : "Precio no disponible";
+}
+
 function Favoritos() {
   const { favoritos, toggleFavorito } = useFavoritos();
 
@@ -39,8 +54,12 @@ function Favoritos() {
                 <div className="producto-imagen">
 
                   <img
-                    src={producto.imagen}
+                    src={obtenerUrlImagen(producto.imagen)}
                     alt={producto.nombre}
+                    onError={(evento) => {
+                      evento.currentTarget.onerror = null;
+                      evento.currentTarget.src = "/img/productos.svg";
+                    }}
                   />
 
                   <button
@@ -63,7 +82,7 @@ function Favoritos() {
                 <p>{producto.descripcion}</p>
 
                 <strong>
-                  ₡{producto.precio.toLocaleString("es-CR")}
+                  {formatearPrecio(producto.precio)}
                 </strong>
 
                 <div className="acciones">
