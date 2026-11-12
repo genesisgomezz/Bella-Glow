@@ -1,9 +1,6 @@
-
 import { Router } from "express";
 import multer from "multer";
-import path from "node:path";
-import fs from "node:fs";
-import { randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import pool from "../confit/database";
 import {
   verificarToken,
@@ -12,21 +9,8 @@ import {
 
 const router = Router();
 
-const carpetaImagenes = path.join(process.cwd(), "uploads");
-fs.mkdirSync(carpetaImagenes, { recursive: true });
-
-const almacenamiento = multer.diskStorage({
-  destination: (_req, _file, callback) => {
-    callback(null, carpetaImagenes);
-  },
-  filename: (_req, file, callback) => {
-    const extension = path.extname(file.originalname).toLowerCase();
-    callback(null, `${randomUUID()}${extension}`);
-  },
-});
-
 const upload = multer({
-  storage: almacenamiento,
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 5 * 1024 * 1024,
   },
@@ -48,12 +32,67 @@ const upload = multer({
   },
 });
 
+async function subirACloudinary(
+  archivo: Express.Multer.File
+): Promise<string> {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+  if (!cloudName || !apiKey || !apiSecret) {
+    throw new Error(
+      "Cloudinary no está configurado. Revisa las variables de entorno del backend."
+    );
+  }
+
+  const timestamp = Math.floor(Date.now() / 1000);
+  const folder = "bella-glow/productos";
+
+  const parametrosFirmados = `folder=${folder}&timestamp=${timestamp}`;
+  const signature = createHash("sha1")
+    .update(`${parametrosFirmados}${apiSecret}`)
+    .digest("hex");
+
+  const formulario = new FormData();
+  const archivoBlob = new Blob([new Uint8Array(archivo.buffer)], {
+    type: archivo.mimetype,
+  });
+
+  formulario.append("file", archivoBlob, archivo.originalname);
+  formulario.append("api_key", apiKey);
+  formulario.append("timestamp", String(timestamp));
+  formulario.append("folder", folder);
+  formulario.append("signature", signature);
+
+  const respuesta = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    {
+      method: "POST",
+      body: formulario,
+    }
+  );
+
+  const resultado = (await respuesta.json()) as {
+    secure_url?: string;
+    error?: { message?: string };
+  };
+
+  if (!respuesta.ok || !resultado.secure_url) {
+    console.error("Error de Cloudinary:", resultado.error?.message);
+    throw new Error(
+      resultado.error?.message || "Cloudinary no pudo guardar la imagen."
+    );
+  }
+
+  return resultado.secure_url;
+}
+
 router.post(
   "/subir-imagen",
   verificarToken,
   permitirRoles("ADMIN", "EMPLEADO"),
   (req, res) => {
-    upload.single("imagen")(req, res, (error) => {
+    upload.single("imagen")(req, res, async (error) => {
       if (error) {
         const mensaje =
           error instanceof multer.MulterError
@@ -73,10 +112,22 @@ router.post(
         return;
       }
 
-      res.status(201).json({
-        mensaje: "Imagen subida correctamente.",
-        imagen: `/uploads/${req.file.filename}`,
-      });
+      try {
+        const urlImagen = await subirACloudinary(req.file);
+
+        res.status(201).json({
+          mensaje: "Imagen subida correctamente a Cloudinary.",
+          imagen: urlImagen,
+        });
+      } catch (error) {
+        console.error("Error al subir imagen:", error);
+        res.status(500).json({
+          mensaje:
+            error instanceof Error
+              ? error.message
+              : "No se pudo subir la imagen.",
+        });
+      }
     });
   }
 );
